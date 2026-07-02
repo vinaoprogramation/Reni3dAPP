@@ -19,6 +19,7 @@ import CarroselFotos from "./CarroselFotos";
 export default function Detalhes({ visivel, fecharModal }) {
       const [ativoFotos, setAtivoFotos] = useState(false)
       const [mandaFotos, setMandaFotos] = useState([])
+      const [contador, setContador] = useState(0)
 
 
     const [baixando, setBaixando] = useState(false);
@@ -123,7 +124,7 @@ export default function Detalhes({ visivel, fecharModal }) {
                         padding: 20
                     }}
                 >
-                <CarroselFotos visivelFotos={ativoFotos} fotos={mandaFotos} fecharModalFotos={() => setAtivoFotos(false)} />
+                <CarroselFotos visivelFotos={ativoFotos} fotos={mandaFotos} fecharModalFotos={() => setAtivoFotos(false)} contadorInicial={contador}/>
                     
                     {dadosIndividuais && (
                         <View style={{ height: 45 }}>
@@ -137,12 +138,13 @@ export default function Detalhes({ visivel, fecharModal }) {
                     {dadosIndividuais && (
                         <FlatList
                             data={dadosIndividuais.fotos ?? []}
-                            keyExtractor={(item) => String(item.id)}
-                            renderItem={({ item }) => (
+                            keyExtractor={(item, index) => String(item.id)}
+                            renderItem={({ item, index }) => (
                                 <TouchableOpacity
                                 onPress={()=>{
                                     setAtivoFotos(true)
                                     setMandaFotos(dadosIndividuais.fotos )
+                                    setContador(index)
                                   }}
                                 >
                                     <Image

@@ -13,7 +13,7 @@ const useImpreesao = create((set, get) => ({
 
 
     try {
-      const res = await fetch('http://10.0.2.2:3001/catalogo');
+      const res = await fetch('http://192.168.1.14:3001/catalogo');
       const json = await res.json();
 
 
@@ -32,7 +32,7 @@ const useImpreesao = create((set, get) => ({
 
 
     try {
-      const res = await fetch(`http://10.0.2.2:3001/catalogo/${id}`);
+      const res = await fetch(`http://192.168.1.14:3001/catalogo/${id}`);
       const json = await res.json();
       console.log(json)
 

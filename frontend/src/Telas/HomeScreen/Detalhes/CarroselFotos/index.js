@@ -1,37 +1,33 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useEffect, useState } from "react";
 import { Image, Text, View, TouchableOpacity, Modal, Dimensions } from "react-native";
-
-
 
 const height = Dimensions.get('screen').height;
 const width = Dimensions.get('screen').width;
 
-import seta from "../../../../../assets/left.png"
-
+import seta from "../../../../../assets/left.png";
 import useImpreesao from "../../../../Contexts/useImpressao";
-export default function CarroselFotos({ visivelFotos, fecharModalFotos, fotos }) {
-    const [contador, setContador] = useState(0)
+
+export default function CarroselFotos({ visivelFotos, fecharModalFotos, fotos, contadorInicial }) {
+
+    const dadosIndividuais = useImpreesao((state) => state.dadosIndividuais)
+    const [contador, setContador] = useState(0);
+    useEffect(() => {
+        setContador(contadorInicial)
+    }, [contadorInicial])
+
+    const listaFotos = fotos || [];
 
     const aumenta = () => {
-        setContador(contador + 1)
-    }
-
+        if (contador < listaFotos.length - 1) {
+            setContador(contador + 1);
+        }
+    };
 
     const diminui = () => {
-        setContador(contador - 1)
-    }
-
-    useEffect(() => {
-        console.log(fotos[0])
-        console.log(fotos[1])
-
-
-    })
-
-
-
-
+        if (contador > 0) {
+            setContador(contador - 1);
+        }
+    };
 
     return (
         <Modal
@@ -63,7 +59,6 @@ export default function CarroselFotos({ visivelFotos, fecharModalFotos, fotos })
                     }}
                 />
 
-
                 <View
                     style={{
                         backgroundColor: "white",
@@ -73,56 +68,90 @@ export default function CarroselFotos({ visivelFotos, fecharModalFotos, fotos })
                         padding: 20
                     }}
                 >
+                    <View style={{marginBottom: 25}}>
+                        <Text style={{ textAlign: 'left', fontSize: 20, fontWeight: 'bold' }}>
+                        {dadosIndividuais.projeto?.nome_impressao} {"\u2022"} {contador + 1} / {listaFotos.length}
+                    </Text>
+                    </View>
+                    
 
-                    <View style={{}}>
 
-                        <Text>{contador}</Text>
+                    <View style={{ flex: 1, position: 'relative', justifyContent: 'center' }}>
 
-                        {contador > 0 ? (<TouchableOpacity onPress={() => {
-                            diminui()
-                        }}>
-                            <View style={{ backgroundColor: '#ffffff', width: 50, height: 50, borderRadius: 100, justifyContent: 'center', alignItems: 'center', position: 'absolute', marginTop: 200, opacity: 0.7 }}>
+                        {listaFotos && listaFotos[contador] && listaFotos[contador].url ? (
+                            <Image
+                                style={{
+                                    width: "100%",
+                                    height: '100%',
+                                    borderRadius: 30,
+
+                                }}
+                                source={{ uri: listaFotos[contador].url }}
+                            />
+                        ) : (
+                            <Text style={{ alignSelf: 'center' }}>Imagem indisponível</Text>
+                        )}
+
+                        {contador > 0 && (
+                            <TouchableOpacity
+                                onPress={diminui}
+                                style={{
+                                    position: 'absolute',
+                                    left: 15,
+                                    backgroundColor: '#ffffff',
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 25,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    opacity: 0.8,
+                                    elevation: 5,
+                                    zIndex: 5
+                                }}
+                            >
                                 <Image
                                     style={{ width: 30, height: 30 }}
                                     source={seta}
                                 />
-                            </View>
+                            </TouchableOpacity>
+                        )}
 
-                        </TouchableOpacity>) : (null)}
-
-
-
-
-                        {contador < fotos.length ?? [] ? (<TouchableOpacity onPress={() => {
-                            aumenta()
-                        }}>
-                            <View style={{ backgroundColor: '#ffffff', width: 50, height: 50, borderRadius: 100, justifyContent: 'center', alignItems: 'center', position: 'absolute', marginTop: 200, alignSelf: 'flex-end', transform: [{ rotate: '180deg' }], opacity: 0.7 }}>
+                        {contador < listaFotos.length - 1 && (
+                            <TouchableOpacity
+                                onPress={aumenta}
+                                style={{
+                                    position: 'absolute',
+                                    right: 15, 
+                                    backgroundColor: '#ffffff',
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 25,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    transform: [{ rotate: '180deg' }],
+                                    opacity: 0.8,
+                                    elevation: 5,
+                                }}
+                            >
                                 <Image
                                     style={{ width: 30, height: 30 }}
                                     source={seta}
                                 />
+                            </TouchableOpacity>
 
 
+                        )}
 
-                            </View>
-                        </TouchableOpacity>) : (null)}
-
-
-                        <Image
-                            style={{
-                                width: "100%",
-                                height: '90%',
-                                marginBottom: 20,
-                                borderRadius: 30,
-                                elevation: 3
-                            }} source={{ uri: fotos[contador].url }}
-                        />
-
-
+                       
 
 
                     </View>
 
+                     <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end', height: 60 }}>
+                            <TouchableOpacity style={{ marginRight: 30, marginBottom: 10 }} onPress={fecharModalFotos}>
+                                <Text style={{ color: "#59afff" }}>FECHAR</Text>
+                            </TouchableOpacity>
+                        </View>
                 </View>
             </View>
         </Modal>
