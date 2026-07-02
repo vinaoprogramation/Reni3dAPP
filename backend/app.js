@@ -93,40 +93,37 @@ app.get('/catalogo', async (req, res) => {
 // =========================
 // SITE-CONFIG
 // =========================
-
-
 app.get("/thumbnail/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-
-
     const imagem = await axios.get(
-      `https://api-ip3d.mbinfoseg.com.br/api/catalogo/fotos/${id}/visualizar`,
+      `https://api-ip3d.mbinfoseg.com.br/api/catalogo/fotos/${req.params.id}/visualizar`,
       {
         responseType: "arraybuffer"
       }
     );
 
-
     const buffer = await sharp(imagem.data)
+      .rotate() 
       .resize({
-        width: 500
+        width: 1000, 
+        withoutEnlargement: true,
+        fit: "inside"
       })
       .jpeg({
-        quality: 75
+        quality: 95,
+        mozjpeg: true,
+        chromaSubsampling: "4:4:4"
       })
       .toBuffer();
-
 
     res.set("Content-Type", "image/jpeg");
     res.send(buffer);
 
-
   } catch (err) {
+    console.log(err);
     res.status(500).send(err.message);
   }
 });
-
 
 app.get('/site-config', async (req, res) => {
   try {
@@ -181,7 +178,7 @@ app.get('/catalogo/:id', async (req, res) => {
 
     const fotos = (data.fotos || []).map(f => ({
       ...f,
-      url: `http://10.0.2.2:3001/thumbnail/${f.id}`
+      url: `http://192.168.1.14:3001/thumbnail/${f.id}`
 
 
     }));
@@ -232,6 +229,32 @@ app.get('/catalogo/:id', async (req, res) => {
     return res.status(500).json({ error: "erro detalhe" });
   }
 });
+
+
+app.get("/metadata/:id", async (req, res) => {
+  try {
+    const imagem = await axios.get(
+      `https://api-ip3d.mbinfoseg.com.br/api/catalogo/fotos/${req.params.id}/visualizar`,
+      {
+        responseType: "arraybuffer"
+      }
+    );
+
+    const metadata = await sharp(imagem.data).metadata();
+
+    console.log(metadata);
+
+    res.json(metadata);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
+
+
+
+
 
 
 app.listen(3001, () => {
