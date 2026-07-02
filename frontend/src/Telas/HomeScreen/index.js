@@ -252,7 +252,12 @@ export default function HomeScreen() {
 
 
       {loading ? (
-        <ActivityIndicator size="large" />
+        <View>
+          <ActivityIndicator size="large" />
+          <Text>Carregando</Text>
+        </View>
+
+        
       ) : (
         <FlatList
           data={dados}

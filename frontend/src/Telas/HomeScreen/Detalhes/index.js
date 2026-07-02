@@ -18,6 +18,7 @@ import CarroselFotos from "./CarroselFotos";
 
 export default function Detalhes({ visivel, fecharModal }) {
       const [ativoFotos, setAtivoFotos] = useState(false)
+      const [mandaFotos, setMandaFotos] = useState([])
 
 
     const [baixando, setBaixando] = useState(false);
@@ -81,6 +82,8 @@ export default function Detalhes({ visivel, fecharModal }) {
 
 
     return (
+
+    
         <Modal
             transparent
             visible={visivel}
@@ -120,7 +123,7 @@ export default function Detalhes({ visivel, fecharModal }) {
                         padding: 20
                     }}
                 >
-                <CarroselFotos visivelFotos={ativoFotos} fecharModalFotos={() => setAtivoFotos(false)} />
+                <CarroselFotos visivelFotos={ativoFotos} fotos={mandaFotos} fecharModalFotos={() => setAtivoFotos(false)} />
                     
                     {dadosIndividuais && (
                         <View style={{ height: 45 }}>
@@ -139,6 +142,7 @@ export default function Detalhes({ visivel, fecharModal }) {
                                 <TouchableOpacity
                                 onPress={()=>{
                                     setAtivoFotos(true)
+                                    setMandaFotos(dadosIndividuais.fotos )
                                   }}
                                 >
                                     <Image
