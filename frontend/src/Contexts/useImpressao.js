@@ -98,6 +98,10 @@ const useImpreesao = create((set, get) => ({
     set({ carregaPorAutor: true })
   },
 
+  mudaCarregaPorAutorFalse: async () => {
+    set({ carregaPorAutor: false })
+  },
+
 
 }
 )

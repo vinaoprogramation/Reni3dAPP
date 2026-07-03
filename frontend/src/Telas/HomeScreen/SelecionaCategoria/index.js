@@ -20,6 +20,9 @@ export default function SelecionaCategoria({ categoriaVisivel }) {
 
   const mudaCarregaPorAutor = useImpreesao((state) => state.mudaCarregaPorAutor)
 
+    const mudaCarregaPorAutorFalse = useImpreesao((state) => state.mudaCarregaPorAutorFalse)
+
+
 
   useEffect(() => {
     pegaAlunos()
@@ -41,6 +44,7 @@ export default function SelecionaCategoria({ categoriaVisivel }) {
 
           <TouchableOpacity style={{ paddingVertical: 15 }}
             onPress={() => {
+              mudaCarregaPorAutorFalse()
 
             }}
           >
@@ -79,7 +83,7 @@ export default function SelecionaCategoria({ categoriaVisivel }) {
 
         </View>
 
-    ) : (null)}
+      ) : (null)}
 
     </View>
   )

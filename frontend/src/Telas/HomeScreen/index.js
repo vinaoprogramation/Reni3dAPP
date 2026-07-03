@@ -50,6 +50,7 @@ export default function HomeScreen() {
 
 
 
+
   const lista = carregaPorAutor ? dadosPorAutor : dados;
 
 
@@ -58,7 +59,7 @@ export default function HomeScreen() {
     setLoading(true)
     load();
     setLoading(false)
-  }, []);
+  }, [ ,carregaPorAutor]);
   
 
 
