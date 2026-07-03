@@ -9,7 +9,7 @@ import logo from "../../../assets/logo.jpeg"
 import olho from "../../../assets/visible.png"
 
 
-
+import SelecionaCategoria from './SelecionaCategoria';
 
 import useImpreesao from '../../Contexts/useImpressao';
 
@@ -20,11 +20,23 @@ import Detalhes from './Detalhes';
 
 
 export default function HomeScreen() {
-    const [ativo, setAtivo] = useState(false)
- 
+  const [ativo, setAtivo] = useState(false)
+
+  const [ativoCategoria, setAtivoCategoria] = useState(false)
+
+  const filtraAutor = useImpreesao((state) => state.filtraAutor)
+
+  const carregaPorAutor = useImpreesao((state) => state.carregaPorAutor)
+
+  const dadosPorAutor = useImpreesao((state) => state.dadosPorAutor)
+  
+  const nome = useImpreesao((state) => state.nome)
 
 
   const [loading, setLoading] = useState(false);
+
+  const [loadingAutor, setLoadingAutor] = useState(false);
+
   const [busca, setBusca] = useState("");
 
 
@@ -34,7 +46,12 @@ export default function HomeScreen() {
   const load = useImpreesao((state) => state.load)
 
 
-    const pegaId = useImpreesao((state) => state.pegaId)
+  const pegaId = useImpreesao((state) => state.pegaId)
+
+
+
+  const lista = carregaPorAutor ? dadosPorAutor : dados;
+
 
 
   useEffect(() => {
@@ -42,7 +59,15 @@ export default function HomeScreen() {
     load();
     setLoading(false)
   }, []);
+  
 
+
+  useEffect(() => {
+    setLoadingAutor(true)
+    filtraAutor(nome);
+    setAtivo(false)
+    setLoadingAutor(false)
+  }, [carregaPorAutor, nome]);
 
 
 
@@ -115,11 +140,11 @@ export default function HomeScreen() {
 
 
       <TouchableOpacity style={{ width: '90%', borderRadius: 12, paddingVertical: 7, marginVertical: 20, marginHorizontal: 'auto', backgroundColor: '#669cda' }}
-      onPress={()=>{
-        setAtivo(true)
-        pegaId(item.id)
-      }}
-     
+        onPress={() => {
+          setAtivo(true)
+          pegaId(item.id)
+        }}
+
       >
         <View style={{ justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
           <Image
@@ -154,7 +179,7 @@ export default function HomeScreen() {
 
 
 
-  const header = useCallback(() => (
+  const header = () => (
     <View style={{ marginTop: 30, }}>
 
 
@@ -205,48 +230,49 @@ export default function HomeScreen() {
           value={busca}
           onChangeText={setBusca}
           style={{
-            borderWidth: 0.5, borderColor: "#b8b8b8", borderRadius: 15, margin: 13, paddingVertical: 17, paddingHorizontal: 10, color: "#d1d0d0"
+            borderWidth: 0.5, borderColor: "#b8b8b8", borderRadius: 15, margin: 10, paddingVertical: 17, paddingHorizontal: 10, color: "#d1d0d0"
           }}
         />
 
 
         <TouchableOpacity
-          placeholder='Busca por nome'
-          value={busca}
-          onChangeText={setBusca}
+
           style={{
-            borderWidth: 0.5, borderColor: "#b8b8b8", borderRadius: 15, margin: 13, paddingVertical: 17, paddingHorizontal: 10,
+            borderWidth: 0.5, borderColor: "#b8b8b8", borderRadius: 15, margin: 10, paddingVertical: 17, paddingHorizontal: 10,
           }}
 
 
           onPress={() => {
-
-
-          }}
+            setAtivoCategoria(true)
+          }
+          }
         >
           <Text style={{ color: "#727272" }}>Categoria</Text>
         </TouchableOpacity>
 
 
+
+
       </View>
 
-
+      <SelecionaCategoria
+        categoriaVisivel={ativoCategoria}
+      />
     </View>
 
 
-  ), [])
+
+  )
 
 
   return <>
+
     <Detalhes visivel={ativo} fecharModal={() => setAtivo(false)} />
 
 
-   
-   
+
+
     <View style={estilos.fundo}>
-     
-
-
 
 
 
@@ -257,10 +283,10 @@ export default function HomeScreen() {
           <Text>Carregando</Text>
         </View>
 
-        
+
       ) : (
         <FlatList
-          data={dados}
+          data={lista}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderItem}
           initialNumToRender={3}

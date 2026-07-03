@@ -5,7 +5,10 @@ const useImpreesao = create((set, get) => ({
   dados: [],
   dadosIndividuais: null,
   dadosPorAutor: null,
+  alunos: null,
   id: null,
+  nome: null,
+  carregaPorAutor: false,
 
 
 
@@ -53,10 +56,9 @@ const useImpreesao = create((set, get) => ({
     try {
       const res = await fetch(`http://192.168.1.14:3002/teste/${nome}`);
       const json = await res.json();
-      console.log(json)
 
 
-      set({ dadosPorAutor: (json) });
+      set({ dadosPorAutor: (json.dadosFiltrados) });
 
 
     } catch (e) {
@@ -65,8 +67,35 @@ const useImpreesao = create((set, get) => ({
   },
 
 
+   pegaAlunos: async () => {
+
+
+    try {
+      const res = await fetch('http://192.168.1.14:3002/alunos');
+      const json = await res.json();
+
+
+      set({ alunos: (json.nomesAlunos || []) });
+
+
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
+
+
+
   pegaId: async (id) => {
     set({ id: id })
+  },
+
+  pegaNome: async (nome) => {
+    set({ nome: nome })
+  },
+
+  mudaCarregaPorAutor: async () => {
+    set({ carregaPorAutor: true })
   },
 
 

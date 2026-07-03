@@ -103,9 +103,9 @@ app.get("/thumbnail/:id", async (req, res) => {
     );
 
     const buffer = await sharp(imagem.data)
-      .rotate() 
+      .rotate()
       .resize({
-        width: 1000, 
+        width: 1000,
         withoutEnlargement: true,
         fit: "inside"
       })
@@ -233,26 +233,96 @@ app.get('/catalogo/:id', async (req, res) => {
 
 
 
-app.get('/teste/:nome', async (req, res) => { 
-    try { 
-        const { nome } = req.params; 
-        
-        // Requisição à API
-        const api = await axios.get(`https://api-ip3d.mbinfoseg.com.br/api/catalogo`); 
-        const data = api.data; 
-        const projetos = data.projetos;
+app.get('/teste/:nome', async (req, res) => {
+  try {
+    const { nome } = req.params;
 
-        const impressoes = projetos.filter(projeto => projeto.usuario_nome === nome);
+    // Requisição à API
+    const api = await axios.get(`https://api-ip3d.mbinfoseg.com.br/api/catalogo`);
+    const data = api.data;
 
-        const response = { dadosFiltrados: impressoes }; 
-      
-        
-        return res.json(response); 
-    } catch (err) { 
-        console.error(err.message); 
-        return res.status(500).json({ error: "Erro interno no servidor" }); 
-    } 
+
+    const projetos = data.projetos;
+
+    const impressoes = projetos.filter(projeto => projeto.usuario_nome === nome);
+
+    const detalhes = await Promise.all(
+      impressoes.map(p =>
+        axios.get(`https://api-ip3d.mbinfoseg.com.br/api/catalogo/${p.id}`)
+      )
+    );
+
+
+    const resultado = impressoes.map((p, i) => {
+      const fotos = detalhes[i].data.fotos || [];
+      const perfis = detalhes[i].data.projeto || [];
+
+
+      const isoString = detalhes[i].data.projeto.created_at;
+      const data = new Date(isoString);
+
+
+      const formatoBrasil = new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+        timeZone: 'America/Sao_Paulo'
+      });
+
+
+      const dataFormatada = formatoBrasil.format(data);
+
+
+      return {
+        ...p,
+        thumbnailUrl: fotos[0]
+          ? `https://api-ip3d.mbinfoseg.com.br/api/catalogo/fotos/${fotos[0].id}/visualizar`
+          : null,
+        fotoPerfil: perfis.usuario_id
+          ? `https://api-ip3d.mbinfoseg.com.br/api/catalogo/usuarios/${perfis.usuario_id}/avatar`
+          : null,
+        data: dataFormatada
+
+
+      };
+    });
+
+
+    const response = { dadosFiltrados: resultado };
+
+
+    return res.json(response);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
 });
+
+
+
+
+app.get('/alunos', async (req, res) => {
+  try {
+
+    const api = await axios.get(`https://api-ip3d.mbinfoseg.com.br/api/catalogo/filtros`);
+    const data = api.data;
+
+    const alunos = data.alunos;
+
+    const nomesAlunos = alunos.map(aluno => aluno.nome);
+
+
+    const response = { nomesAlunos };
+
+
+    return (res.json(response));
+
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
+});
+
+
 
 
 
