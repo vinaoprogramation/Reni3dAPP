@@ -178,7 +178,7 @@ app.get('/catalogo/:id', async (req, res) => {
 
     const fotos = (data.fotos || []).map(f => ({
       ...f,
-      url: `http://192.168.1.14:3001/thumbnail/${f.id}`
+      url: `http://192.168.1.14:3002/thumbnail/${f.id}`
 
 
     }));
@@ -231,34 +231,34 @@ app.get('/catalogo/:id', async (req, res) => {
 });
 
 
-app.get("/metadata/:id", async (req, res) => {
-  try {
-    const imagem = await axios.get(
-      `https://api-ip3d.mbinfoseg.com.br/api/catalogo/fotos/${req.params.id}/visualizar`,
-      {
-        responseType: "arraybuffer"
-      }
-    );
 
-    const metadata = await sharp(imagem.data).metadata();
 
-    console.log(metadata);
+app.get('/teste/:nome', async (req, res) => { 
+    try { 
+        const { nome } = req.params; 
+        
+        // Requisição à API
+        const api = await axios.get(`https://api-ip3d.mbinfoseg.com.br/api/catalogo`); 
+        const data = api.data; 
+        const projetos = data.projetos;
 
-    res.json(metadata);
+        const impressoes = projetos.filter(projeto => projeto.usuario_nome === nome);
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
+        const response = { dadosFiltrados: impressoes }; 
+      
+        
+        return res.json(response); 
+    } catch (err) { 
+        console.error(err.message); 
+        return res.status(500).json({ error: "Erro interno no servidor" }); 
+    } 
 });
 
 
 
 
-
-
-app.listen(3001, () => {
-  console.log("Backend rodando na porta 3001");
+app.listen(3002, () => {
+  console.log("Backend rodando na porta 3002");
 });
 
 

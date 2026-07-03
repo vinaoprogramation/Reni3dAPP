@@ -70,7 +70,7 @@ export default function CarroselFotos({ visivelFotos, fecharModalFotos, fotos, c
                 >
                     <View style={{marginBottom: 25}}>
                         <Text style={{ textAlign: 'left', fontSize: 20, fontWeight: 'bold' }}>
-                        {dadosIndividuais.projeto?.nome_impressao} {"\u2022"} {contador + 1} / {listaFotos.length}
+                        {dadosIndividuais?.projeto?.nome_impressao} {"\u2022"} {contador + 1} / {listaFotos.length}
                     </Text>
                     </View>
                     

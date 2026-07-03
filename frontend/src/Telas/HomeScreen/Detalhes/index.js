@@ -124,7 +124,7 @@ export default function Detalhes({ visivel, fecharModal }) {
                         padding: 20
                     }}
                 >
-                <CarroselFotos visivelFotos={ativoFotos} fotos={mandaFotos} fecharModalFotos={() => setAtivoFotos(false)} contadorInicial={contador}/>
+                <CarroselFotos visivelFotos={ativoFotos} nome={dadosIndividuais?.projeto?.nome_impressap} fotos={mandaFotos} fecharModalFotos={() => setAtivoFotos(false)} contadorInicial={contador}/>
                     
                     {dadosIndividuais && (
                         <View style={{ height: 45 }}>
